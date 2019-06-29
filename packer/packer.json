@@ -1,0 +1,70 @@
+{
+  "variables": {
+    "vpc": "{{env `BUILD_VPC_ID`}}",
+    "subnet": "{{env `BUILD_SUBNET_ID`}}",
+    "aws_region": "{{env `AWS_REGION`}}",
+    "ami_name": "ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-20180912"
+  },
+  "builders": [{
+    "name": "Django vulnerable webapp",
+    "type": "amazon-ebs",
+    "region": "{{user `aws_region`}}",
+    "source_ami": "ami-07a3bd4944eb120a0",
+    "instance_type": "t2.micro",
+    "ssh_username": "ubuntu",
+    "ami_name": "Django vulnerable webapp {{isotime \"02-Jan-06 03_04_05\"}}",
+    "tags": {
+      "Name": "{{user `ami_name`}}"
+    },
+    "run_tags": { 
+      "Name": "{{user `ami_name`}}"
+    },
+    "run_volume_tags": {
+      "Name": "{{user `ami_name`}}"
+    },
+    "snapshot_tags": {
+      "Name": "{{user `ami_name`}}"
+    },
+    "ami_description": "Ubuntu",
+    "associate_public_ip_address": "false",
+    "vpc_id": "{{user `vpc`}}",
+    "subnet_id": "{{user `subnet`}}"
+  }],
+  "provisioners": [
+    {
+        "type": "shell",
+        "inline": [
+            "sleep 30"
+        ]
+    }, 
+    {
+        "type": "shell",
+        "inline": [
+            "sudo apt update -y"
+        ]
+    }, 
+    {
+        "type": "shell",
+        "inline": [
+	    "sudo DEBIAN_FRONTEND=noninteractive apt-get -yq -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' upgrade"
+        ]
+    }, 
+    {
+        "type": "shell",
+        "inline": [
+            "sudo apt install python-pip -y"
+        ]
+    }, 
+    {
+        "type": "shell",
+        "inline": [
+            "sudo pip install ansible"
+        ]
+    }, 
+    {
+        "type": "ansible-local",
+        "playbook_file": "ansible/build.yml",
+        "playbook_dir": "ansible"
+    }
+  ]
+}
