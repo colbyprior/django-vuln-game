@@ -1,0 +1,13 @@
+---
+- name: Check if Debian
+  include: "install.deb.yml"
+  when: ansible_os_family == 'Debian'
+
+- name: add virtualhosts.conf
+  template:
+    src: virtualhosts.conf.j2
+    dest: /etc/apache2/sites-enabled/virtualhosts.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart apache2

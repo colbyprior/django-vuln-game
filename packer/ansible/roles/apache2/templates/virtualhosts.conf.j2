@@ -1,0 +1,15 @@
+<VirtualHost _default_:80>
+    ServerName {{ hostname }}
+    DocumentRoot /var/www/html
+
+    Alias /static {{ django_path }}/djangoproject/static
+    <Location "/static">
+        Require all granted
+    </Location>
+
+    # Python/WSGI setup
+    WSGIDaemonProcess aw python-home={{ django_path }}/djangoenv python-path={{ django_path }} user=www-data group=www-data processes=4 threads=10 display-name=wsgi-www
+    WSGIProcessGroup aw
+    WSGIScriptAlias / {{ django_path }}/djangoproject/wsgi.py
+
+</VirtualHost>

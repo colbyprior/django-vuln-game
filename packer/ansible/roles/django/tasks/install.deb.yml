@@ -4,5 +4,4 @@
   apt:
     name:
       - python3-django
-      - apache2
       - python3-venv
